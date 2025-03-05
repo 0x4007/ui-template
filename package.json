@@ -12,7 +12,7 @@
   "scripts": {
     "start": "bun build/esbuild-server.ts",
     "build": "bun build/esbuild-build.ts",
-    "format": "run-s format:lint format:prettier format:cspell",
+    "format": "run-s format:cspell format:lint format:prettier",
     "format:lint": "eslint --fix .",
     "format:prettier": "prettier --write .",
     "format:cspell": "cspell **/*",
