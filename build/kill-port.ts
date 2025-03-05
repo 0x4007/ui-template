@@ -14,10 +14,10 @@ export function killPortProcess(port: number): void {
   try {
     // Using a safe port number and basic command
     const cmd = `lsof -ti:${port}`;
-    const pids = execSync(cmd, { encoding: "utf8" }).trim();
+    const processIds = execSync(cmd, { encoding: "utf8" }).trim();
 
-    if (pids) {
-      execSync(`kill -9 ${pids}`);
+    if (processIds) {
+      execSync(`kill -9 ${processIds}`);
     }
   } catch (error: unknown) {
     if (error instanceof Error && !error.message.includes("Command failed")) {
