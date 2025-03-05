@@ -1,4 +1,4 @@
-# `@ubiquity/ts-template`
+# `@ubiquity/ui-template`
 
 This template repository includes support for the following:
 
@@ -9,20 +9,6 @@ This template repository includes support for the following:
 
 ## Testing
 
-### Cypress
-
-To test with Cypress Studio UI, run
-
-```shell
-bun run cy:open
-```
-
-Otherwise, to simply run the tests through the console, run
-
-```shell
-bun run cy:run
-```
-
 ### Jest
 
 To start Jest tests, run
@@ -31,7 +17,7 @@ To start Jest tests, run
 bun run test
 ```
 
-## Sync any repository to latest `ts-template`
+## Sync any repository to latest `ui-template`
 
 A bash function that can do this for you:
 
@@ -39,7 +25,7 @@ A bash function that can do this for you:
 #!/bin/bash
 # shellcheck shell=bash
 
-get-ts-template() {
+get-ui-template() {
   local branch_name
   branch_name=$(git rev-parse --abbrev-ref HEAD)
 
@@ -59,7 +45,7 @@ get-ts-template() {
   fi
 
   echo "Adding template remote..."
-  git remote add template https://github.com/ubiquity/ts-template
+  git remote add template https://github.com/ubiquity/ui-template
 
   echo "Fetching from template..."
   if ! git fetch template development; then
