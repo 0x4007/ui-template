@@ -69,7 +69,7 @@ export function renderGitHubLoginButton() {
 export function renderGitRevision() {
   const gitRevision = document.getElementById("git-revision") as HTMLAnchorElement;
   if (!gitRevision) throw new Error("Could not find element with id 'git-revision'");
-  gitRevision.href = `https://github.com/ubiquity/work.ubq.fi/commit/${GIT_REVISION}`;
+  gitRevision.href = `https://github.com/ubiquity/ui-template/commit/${GIT_REVISION}`;
   gitRevision.textContent = GIT_REVISION;
 }
 

@@ -369,9 +369,9 @@
     max-height: 48px;
   }
   #authenticated > img {
-    height: 35px;
+    height: 36px;
     margin-left: 4px;
-    border-radius: 50%;
+    border-radius: 6px;
   }
   .toolbar[data-authenticated="true"] > #github-login-button {
     display: none;
