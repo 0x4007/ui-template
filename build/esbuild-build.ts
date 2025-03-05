@@ -3,6 +3,8 @@ import { config } from "dotenv";
 import esbuild from "esbuild";
 import { invertColors } from "./plugins/invert-colors";
 import { pwaManifest } from "./plugins/pwa-manifest";
+
+export const PORT = 8080;
 config();
 
 const typescriptEntries = ["src/home/home.ts"];

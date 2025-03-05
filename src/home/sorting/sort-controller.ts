@@ -2,7 +2,7 @@ import { GitHubAggregated } from "../github-types";
 import { Sorting } from "./generate-sorting-buttons";
 import { sortBy } from "./sort-by";
 import { sortByActivity } from "./sort-by-activity";
-import { sortByBackLinks } from "./sort-by-backLinks";
+import { sortByBackLinks } from "./sort-by-back-links";
 import { sortByPriority } from "./sort-by-priority";
 
 export function sortIssuesController(tasks: GitHubAggregated[], sorting?: Sorting, options = { ordering: "normal" }) {

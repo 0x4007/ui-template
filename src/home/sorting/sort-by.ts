@@ -1,7 +1,7 @@
 import { GitHubAggregated } from "../github-types";
 import { SORTING_OPTIONS } from "./generate-sorting-buttons";
 import { sortByActivity } from "./sort-by-activity";
-import { sortByBackLinks } from "./sort-by-backLinks";
+import { sortByBackLinks } from "./sort-by-back-links";
 import { sortByPriority } from "./sort-by-priority";
 
 export function sortBy(tasks: GitHubAggregated[], sortBy: (typeof SORTING_OPTIONS)[number]) {
