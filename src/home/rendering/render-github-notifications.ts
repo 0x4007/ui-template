@@ -53,7 +53,6 @@ export function renderEmpty() {
     notificationsContainer.innerHTML = "";
   }
   const issueWrapper = document.createElement("div");
-  issueWrapper.style.marginTop = "20px";
   const issueElement = document.createElement("div");
   issueElement.innerHTML = `
     <div class="info"><div class="title"><h3>No notifications found</h3></div></div>

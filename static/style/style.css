@@ -410,42 +410,7 @@
       display: none;
     }
   }
-  @media screen and (max-width: 3000px) {
-    .partner {
-      margin-top: 0;
-    }
-    .full-repo-name {
-      display: unset;
-      display: flex;
-      width: auto;
-    }
-    .issue-element-inner > * {
-      max-width: unset;
-    }
-    .title > h3 {
-      white-space: nowrap;
-    }
-    .full {
-      display: none !important;
-    }
-    .issue-element-inner {
-      display: block;
-    }
-    #issues-container .labels {
-      margin-top: 4px;
-    }
-    #branding {
-      margin: auto;
-    }
-    .toolbar {
-      overflow-x: auto;
-    }
-    .toolbar button {
-      height: 24px;
-      padding: 4px 16px;
-      line-height: 1;
-    }
-  }
+
   @media screen and (max-width: 1280px) {
     .preview {
       max-width: calc(100vw - 14px);
@@ -990,5 +955,42 @@
     #filters-bottom {
       display: none;
     }
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .partner {
+    margin-top: 0;
+  }
+  .full-repo-name {
+    display: unset;
+    display: flex;
+    width: auto;
+  }
+  .issue-element-inner > * {
+    max-width: unset;
+  }
+  .title > h3 {
+    white-space: nowrap;
+  }
+  .full {
+    display: none !important;
+  }
+  .issue-element-inner {
+    display: block;
+  }
+  #issues-container .labels {
+    margin-top: 4px;
+  }
+  #branding {
+    margin: auto;
+  }
+  .toolbar {
+    overflow-x: auto;
+  }
+  .toolbar button {
+    height: 24px;
+    padding: 4px 16px;
+    line-height: 1;
   }
 }
