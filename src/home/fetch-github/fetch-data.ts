@@ -179,8 +179,8 @@ function countBackLinks(aggregated: GitHubAggregated, allPullRequests: GitHubPul
   } else if (aggregated.notification.subject.type === "PullRequest" && aggregated.pullRequest) {
     const { url, base } = aggregated.pullRequest;
     prUrl = url;
-    issueNumber = aggregated.issue?.number || null;
-    issueUrl = aggregated.issue?.url || null;
+    issueNumber = aggregated.issue?.number ?? null;
+    issueUrl = aggregated.issue?.url ?? null;
     [ownerName, repoName] = base.repo.url.split("/").slice(-2);
   } else {
     return 0; // unsupported type
