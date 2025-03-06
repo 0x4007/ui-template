@@ -1,7 +1,7 @@
 {
-  "name": "Notifications | Ubiquity DAO",
-  "short_name": "Nofications",
-  "description": "View and sort through all of the notifications within the DevPool network.",
+  "name": "User Interface Template | Ubiquity DAO",
+  "short_name": "UI Template",
+  "description": "This is a user interface template, for web applications in the Ubiquity DAO ecosystem.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000410",
