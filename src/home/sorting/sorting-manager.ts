@@ -40,14 +40,14 @@ export class SortingManager {
   private _getSearchableStrings(gitHubNotification: GitHubAggregated, searchableProperties: readonly SearchableProperty[]) {
     let searchableStrings: string[] = [];
 
-    if (gitHubNotification.notification.subject.type === "Issue") {
+    if (gitHubNotification.subject.type === "Issue") {
       searchableStrings = searchableProperties
         .map((prop) => {
           const value = gitHubNotification.issue[prop];
           return value?.toString().toLowerCase();
         })
         .filter((str): str is string => str !== undefined);
-    } else if (gitHubNotification.notification.subject.type === "PullRequest" && gitHubNotification.pullRequest) {
+    } else if (gitHubNotification.subject.type === "PullRequest" && gitHubNotification.pullRequest) {
       searchableStrings = searchableProperties
         .map((prop) => {
           const value = gitHubNotification.pullRequest?.[prop];
@@ -56,7 +56,7 @@ export class SortingManager {
         .filter((str): str is string => str !== undefined);
     }
 
-    searchableStrings.push(gitHubNotification.notification.subject.title.toLowerCase());
+    searchableStrings.push(gitHubNotification.subject.title.toLowerCase());
     return searchableStrings;
   }
 
@@ -68,7 +68,7 @@ export class SortingManager {
       const gitHubNotifications = await getNotifications();
       if (!gitHubNotifications) return;
 
-      const gitHubNotification = gitHubNotifications.find((n) => n.notification.id === notificationId);
+      const gitHubNotification = gitHubNotifications.find((n) => n.id === notificationId);
       if (!gitHubNotification) return;
 
       const searchableProperties = ["title", "body", "number", "html_url"] as const;

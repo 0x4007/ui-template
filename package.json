@@ -29,7 +29,10 @@
     "open-source"
   ],
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.1",
+    "@supabase/supabase-js": "^2.39.0",
+    "@octokit/request-error": "^6.1.0",
+    "@octokit/rest": "^20.0.2",
+    "marked": "^11.0.0",
     "dotenv": "^16.4.7"
   },
   "devDependencies": {
@@ -62,7 +65,8 @@
     "ts-jest": "29.1.2",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.0"
+    "typescript-eslint": "^8.26.0",
+    "esbuild-plugin-env": "^1.0.8"
   },
   "lint-staged": {
     "*.ts": [

@@ -1,7 +1,7 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
 import { fetchAvatars } from "./fetch-github/fetch-avatar";
-import { fetchAllNotifications } from "./fetch-github/fetch-data";
+import { fetchData } from "./fetch-github/fetch-data";
 import { displayNotifications } from "./fetch-github/filter-and-display-notifications";
 import { readyToolbar } from "./ready-toolbar";
 import { renderServiceMessage } from "./render-service-message";
@@ -36,12 +36,12 @@ export function flipShowBotNotifications() {
 }
 
 // Store notifications
-let notifications: Awaited<ReturnType<typeof fetchAllNotifications>> | undefined;
+let notifications: Awaited<ReturnType<typeof fetchData>> | undefined;
 
 // This is made to make notifications global
 export async function getNotifications() {
   if (!notifications) {
-    notifications = await fetchAllNotifications();
+    notifications = await fetchData();
   }
   return notifications;
 }

@@ -4,24 +4,40 @@ import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { GitHubAggregated, GitHubIssue, GitHubNotification, GitHubNotifications, GitHubPullRequest } from "../github-types";
 import { handleRateLimit } from "./handle-rate-limit";
 
-export const organizationImageCache = new Map<string, Blob | null>(); // this should be declared in image related script
+export const organizationImageCache = new Map<string, Blob | null>();
 
-// Generalized function to fetch notifications from GitHub
 async function fetchNotifications(): Promise<GitHubNotifications | null> {
   const providerToken = await getGitHubAccessToken();
+  if (!providerToken) {
+    console.error("No GitHub token found");
+    return null;
+  }
+
   const octokit = new Octokit({ auth: providerToken });
 
   try {
-    const notifications = (await octokit.request("GET /notifications")).data as GitHubNotifications;
+    const notifications = (
+      await octokit.request("GET /notifications", {
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+        all: false, // Only get unread notifications
+        participating: true, // Only get notifications in which the user is directly participating
+      })
+    ).data as GitHubNotifications;
+
     console.log("unfiltered", notifications);
     return notifications;
   } catch (error) {
     if (error instanceof RequestError && error.status === 403) {
-      await handleRateLimit(octokit, error);
+      if (error.response?.headers?.["x-ratelimit-remaining"] === "0") {
+        await handleRateLimit(error as RequestError);
+        return null;
+      }
     }
-    console.warn("error fetching notifications:", error);
+    console.error("Failed to fetch notifications:", error);
+    return null;
   }
-  return null;
 }
 
 export async function fetchIssues(): Promise<GitHubIssue[]> {
@@ -45,14 +61,14 @@ function preFilterNotifications(devpoolRepos: Set<string>, notifications: GitHub
         notification.reason
       )
     ) {
-      console.log("skipping ", notification.subject.title, "cause of reason", notification.reason);
+      console.log("skipping", notification.subject.title, "cause of reason", notification.reason);
       return false;
     }
 
     // Ignore notifications from repos that are not in devpoolRepos
     const repoName = notification.repository.full_name;
     if (!devpoolRepos.has(repoName)) {
-      console.log("skipping ", notification.subject.title, "cause of repo", repoName);
+      console.log("skipping", notification.subject.title, "cause of repo", repoName);
       return false;
     }
     return devpoolRepos.has(repoName);
@@ -127,17 +143,17 @@ export async function getPullRequestNotifications(
     const pullRequestUrl = notification.subject.url;
     const pullRequest = pullRequests.find((pr) => pr.url === pullRequestUrl);
     if (!pullRequest || pullRequest.draft || pullRequest.state === "closed") {
-      console.log("skipping ", notification.subject.title, "cause draft or closed");
+      console.log("skipping", notification.subject.title, "cause draft or closed");
       continue; // Skip draft or closed pull requests
     }
 
     const issue = await fetchIssueFromPullRequest(pullRequest, issues);
     if (!issue) {
-      console.log("skipping ", notification.subject.title, "cause no associated issue");
+      console.log("skipping", notification.subject.title, "cause no associated issue");
       continue; // Skip if no associated issue
     }
 
-    aggregatedData.push({ notification, pullRequest, issue, backLinkCount: 0 });
+    aggregatedData.push({ ...notification, pullRequest, issue, backLinkCount: 0 });
   }
 
   return aggregatedData;
@@ -154,11 +170,11 @@ export function getIssueNotifications(devpoolRepos: Set<string>, notifications: 
     const issueUrl = notification.subject.url;
     const issue = issues.find((issue) => issue.url === issueUrl);
     if (!issue || issue.state === "closed") {
-      console.log("skipping ", notification.subject.title, "cause issue is closed");
+      console.log("skipping", notification.subject.title, "cause issue is closed");
       continue; // Skip closed issues
     }
 
-    aggregatedData.push({ notification, pullRequest: null, issue, backLinkCount: 0 });
+    aggregatedData.push({ ...notification, pullRequest: null, issue, backLinkCount: 0 });
   }
 
   return aggregatedData;
@@ -171,16 +187,16 @@ function countBackLinks(aggregated: GitHubAggregated, allPullRequests: GitHubPul
   let repoName: string, ownerName: string;
 
   // extract URLs and numbers based on the notification type
-  if (aggregated.notification.subject.type === "Issue" && aggregated.issue) {
+  if (aggregated.subject.type === "Issue" && aggregated.issue) {
     const { number, url, repository_url } = aggregated.issue;
     issueNumber = number;
     issueUrl = url;
     [ownerName, repoName] = repository_url.split("/").slice(-2);
-  } else if (aggregated.notification.subject.type === "PullRequest" && aggregated.pullRequest) {
+  } else if (aggregated.subject.type === "PullRequest" && aggregated.pullRequest) {
     const { url, base } = aggregated.pullRequest;
     prUrl = url;
-    issueNumber = aggregated.issue?.number || null;
-    issueUrl = aggregated.issue?.url || null;
+    issueNumber = aggregated.issue?.number ?? null;
+    issueUrl = aggregated.issue?.url ?? null;
     [ownerName, repoName] = base.repo.url.split("/").slice(-2);
   } else {
     return 0; // unsupported type
@@ -246,17 +262,18 @@ function getDevpoolRepos(pullRequests: GitHubPullRequest[], issues: GitHubIssue[
     const [issueOwner, issueRepo] = issue.repository_url.split("/").slice(-2);
     uniqueNames.add(`${issueOwner}/${issueRepo}`);
   }
+
   return uniqueNames;
 }
 
 // Fetch all notifications and return them as an array of aggregated data
-export async function fetchAllNotifications(): Promise<GitHubAggregated[] | null> {
-  // fetches all notifications, pull requests and issues in parallel
+export async function fetchData(): Promise<GitHubAggregated[] | null> {
+  // fetches all notifications, pull requests, and issues in parallel
   const [notifications, pullRequests, issues] = await Promise.all([fetchNotifications(), fetchPullRequests(), fetchIssues()]);
   if (!notifications || !pullRequests || !issues) return null;
 
   const devpoolRepos = getDevpoolRepos(pullRequests, issues);
-  console.log("devpoolRepos: ", devpoolRepos);
+  console.log("devpoolRepos:", devpoolRepos);
 
   const [pullRequestNotifications, issueNotifications] = await Promise.all([
     getPullRequestNotifications(devpoolRepos, notifications, pullRequests, issues),
@@ -271,7 +288,7 @@ export async function fetchAllNotifications(): Promise<GitHubAggregated[] | null
   const filteredNotifications = allNotifications.filter((aggregated) => {
     if (!aggregated.issue?.labels) {
       // skip if no issue or labels
-      console.log("skipping ", aggregated.notification.subject.title, "cause no labels or issue");
+      console.log("skipping", aggregated.subject.title, "cause no labels or issue");
       return false;
     }
 
@@ -282,7 +299,7 @@ export async function fetchAllNotifications(): Promise<GitHubAggregated[] | null
     });
 
     if (!hasPriorityLabel) {
-      console.log("skipping ", aggregated.notification.subject.title, "cause no priority label");
+      console.log("skipping", aggregated.subject.title, "cause no priority label");
     }
     return hasPriorityLabel;
   });
@@ -295,4 +312,25 @@ export async function fetchAllNotifications(): Promise<GitHubAggregated[] | null
 
   console.log("filteredNotifications", filteredNotifications);
   return filteredNotifications;
+}
+
+export async function markNotificationAsRead(notificationId: string): Promise<void> {
+  const providerToken = await getGitHubAccessToken();
+  if (!providerToken) {
+    console.error("No GitHub token found");
+    return;
+  }
+
+  const octokit = new Octokit({ auth: providerToken });
+
+  try {
+    await octokit.request("PATCH /notifications/threads/{thread_id}", {
+      thread_id: Number(notificationId),
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+  } catch (error) {
+    console.error("Failed to mark notification as read:", error);
+  }
 }

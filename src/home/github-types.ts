@@ -1,37 +1,90 @@
-import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
+export type GitHubNotifications = GitHubNotification[];
 
-export interface AvatarCache {
-  [organization: string]: string | null;
+export interface GitHubNotification {
+  id: string;
+  unread: boolean;
+  reason: string;
+  updated_at: string;
+  last_read_at: string | null;
+  subject: {
+    title: string;
+    url: string;
+    latest_comment_url: string | null;
+    type: string;
+  };
+  repository: {
+    id: number;
+    node_id: string;
+    name: string;
+    full_name: string;
+    private: boolean;
+    owner: {
+      login: string;
+      id: number;
+      node_id: string;
+      avatar_url: string;
+      url: string;
+    };
+    html_url: string;
+    description: string | null;
+    url: string;
+  };
+  url: string;
+  subscription_url: string;
 }
 
-export const GITHUB_TASKS_STORAGE_KEY = "gitHubTasks";
+export interface GitHubIssue {
+  url: string;
+  number: number;
+  state: string;
+  title: string;
+  body: string | null;
+  user: {
+    login: string;
+    avatar_url: string;
+  };
+  labels: Array<
+    | string
+    | {
+        name: string;
+        color: string;
+      }
+  >;
+  repository_url: string;
+  html_url: string;
+}
 
-export type TaskStorageItems = {
-  timestamp: number; // in milliseconds
-  tasks: GitHubNotifications;
-  loggedIn: boolean;
-};
+export interface GitHubPullRequest {
+  url: string;
+  state: string;
+  title: string;
+  body: string | null;
+  draft: boolean;
+  base: {
+    repo: {
+      url: string;
+    };
+  };
+  user: {
+    login: string;
+    avatar_url: string;
+  };
+  html_url: string;
+}
 
-export type GitHubUserResponse = RestEndpointMethodTypes["users"]["getByUsername"]["response"];
-export type GitHubUser = GitHubUserResponse["data"];
-export type GitHubIssue = RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
-export type GitHubPullRequest = RestEndpointMethodTypes["pulls"]["get"]["response"]["data"];
-export type GitHubNotifications = RestEndpointMethodTypes["activity"]["listNotificationsForAuthenticatedUser"]["response"]["data"];
-export type GitHubNotification = GitHubNotifications[0];
-export type GitHubAggregated = {
-  issue: GitHubIssue;
-  pullRequest: GitHubPullRequest | null;
-  notification: GitHubNotification;
+export interface GitHubAggregated extends GitHubNotification {
+  comments?: {
+    body: string;
+    html_url: string;
+    user: {
+      login: string;
+      avatar_url: string;
+    };
+  }[];
+  backLinks?: number;
+  priority?: number;
+  activity?: number;
+  issue?: GitHubIssue;
+  pullRequest?: GitHubPullRequest | null;
   backLinkCount: number;
-};
-export type GitHubLabel =
-  | {
-      id?: number;
-      node_id?: string;
-      url?: string;
-      name: string;
-      description?: string | null;
-      color?: string | null;
-      default?: boolean;
-    }
-  | string;
+}
