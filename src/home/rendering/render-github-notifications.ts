@@ -55,7 +55,7 @@ export function renderEmpty() {
   const issueWrapper = document.createElement("div");
   const issueElement = document.createElement("div");
   issueElement.innerHTML = `
-    <div class="info"><div class="title"><h3>No notifications found</h3></div></div>
+    <div class="info"><div class="title"><h3>No list data found</h3></div></div>
   `;
   issueElement.classList.add("issue-element-inner");
   issueWrapper.appendChild(issueElement);
