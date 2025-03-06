@@ -16,8 +16,10 @@
   html,
   #issues-container > div,
   .preview {
-    background-color: var(--dark-background);
+    /* background-color: var(--dark-background); */
     border-color: var(--alt-dark-background-half);
+    background-color: var(--dark-background-half);
+    backdrop-filter: blur(8px);
   }
   #issues-container > div,
   .preview > .preview-content {
