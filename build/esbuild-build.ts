@@ -6,8 +6,8 @@ import { invertColors } from "./plugins/invert-colors";
 export const PORT = 8080;
 config();
 
-const typescriptEntries = ["src/home/home.ts"];
-const cssEntries = ["static/style/style.css"];
+const typescriptEntries = ["src/home/home.ts", "src/home/travel-stipend/travel-stipend.ts"];
+const cssEntries = ["static/style/style.css", "static/style/travel.css"];
 const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg", "static/icon-512x512.png"];
 
 export const esBuildContext: esbuild.BuildOptions = {
