@@ -54,10 +54,18 @@ export function renderEmpty() {
   }
   const issueWrapper = document.createElement("div");
   const issueElement = document.createElement("div");
-  issueElement.innerHTML = `
-    <div class="info"><div class="title"><h3>No list data found</h3></div></div>
-  `;
   issueElement.classList.add("issue-element-inner");
+  issueElement.innerHTML = `
+    <div class="content">
+      <div class="info">
+        <div class="text-info">
+          <div class="title">
+            <h3>No list data found</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
   issueWrapper.appendChild(issueElement);
   notificationsContainer.appendChild(issueWrapper);
 
